@@ -35,7 +35,7 @@ void addLastNode(linkedList_h* L, char* str) {
     if (L->head == NULL) {
         L->head = newNode;
         return;
-    }~~
+    }
     p = L->head;
     while (p->link != NULL) {
         p = p->link;
