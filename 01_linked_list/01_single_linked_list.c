@@ -44,17 +44,17 @@ Node* nodeInit(LinkedList* list, char* str) {
 
 void addLastNode(LinkedList* list, char* str) {
     Node* newNode = nodeInit(list,str);
-    Node* temp;
+    Node* currentNode;
 
     if (list->head == NULL) {
         list->head = newNode;
     }
     else {
-        temp = list->head;
-        while (temp->next != NULL) {
-            temp = temp->next;
+        currentNode = list->head;
+        while (currentNode->next != NULL) {
+            currentNode = currentNode->next;
         }
-        temp->next = newNode;
+        currentNode->next = newNode;
     }
 
     list->count++;
@@ -62,7 +62,7 @@ void addLastNode(LinkedList* list, char* str) {
 
 void insertNode(LinkedList* list, char* str, int index) {
     Node* newNode = nodeInit(list,str);
-    Node* temp = list->head;
+    Node* currentNode = list->head;
     int count = list->count;
     int i;
 
@@ -79,12 +79,12 @@ void insertNode(LinkedList* list, char* str, int index) {
     else {
         for(i=0;i<count;i++) {
             if(i == index-1) {
-                newNode->next = temp->next;
-                temp->next = newNode;
+                newNode->next = currentNode->next;
+                currentNode->next = newNode;
                 list->count++;
                 return;
             }
-                temp = temp->next;
+            currentNode = currentNode->next;
         }
     }
 }
@@ -100,7 +100,7 @@ void deleteLastNode(LinkedList* list) {
     } else {
         prvNode = list->head;
         currentNode = list->head->next;
-        while(currentNode->next != NULL) {
+        while(currentNode->next != NULL) { 
             prvNode = currentNode;
             currentNode = currentNode->next;
         }
@@ -112,7 +112,7 @@ void deleteLastNode(LinkedList* list) {
 }
 
 void deleteNode(LinkedList* list, int index) {
-    Node* temp = list->head;
+    Node* currentNode = list->head;
     int count = list->count;
     int i;
 
@@ -122,18 +122,18 @@ void deleteNode(LinkedList* list, int index) {
 
     if (index == 0) {
         list->head = list->head->next;
-        free(temp);
+        free(currentNode);
         list->count--;
         return;
     }
 
     for(i=0;i<count;i++) {
         if(i == index-1) {
-            temp->next = temp->next->next;
+            currentNode->next = currentNode->next->next;
             list->count--;
             return;
         }
-            temp = temp->next;
+            currentNode = currentNode->next;
     }
     
 }
@@ -142,17 +142,17 @@ LinkedList* searchNodes(LinkedList* list, char* str){
     LinkedList* access = linkedListInit();
     char intToString[100];
 
-    Node* temp = list->head;
+    Node* currentNode = list->head;
     int index = 0;
 
-    while(temp != NULL) {
-        if(!strcmp(temp->data,str)) {
+    while(currentNode != NULL) {
+        if(!strcmp(currentNode->data,str)) {
             // Integer to String
             sprintf(intToString, "%d", index);
             addLastNode(access,intToString);
         }
         index++;
-        temp = temp->next;
+        currentNode = currentNode->next;
     }
 
     if(access->head != NULL) {
@@ -175,13 +175,13 @@ void printSearchNodes(LinkedList* list, char* str) {
 }
 
 void printLinkedList(LinkedList* list) {
-    Node *temp = list->head;
+    Node *currentNode = list->head;
     printf("List = ");
 
-    while(temp != NULL) {
-        printf("%s",temp->data);
-        temp = temp->next;
-        if( temp != NULL ) {
+    while(currentNode != NULL) {
+        printf("%s",currentNode->data);
+        currentNode = currentNode->next;
+        if( currentNode != NULL ) {
             printf(", ");
         }
     }
@@ -204,7 +204,7 @@ void freeLinkedList(LinkedList* list) {
 
 int main() {
     LinkedList* party;
-    LinkedList* temp;
+    LinkedList* currentNode;
 
     party = linkedListInit();
     
