@@ -43,17 +43,17 @@ Node* SLL_Node_Init(LinkedList* list, char* str) {
 
 void SLL_insertNodeLast(LinkedList* list, char* str) {
     Node* newNode = SLL_Node_Init(list,str);
-    Node* currentNode;
+    Node* selectNode;
 
     if (list->head == NULL) {
         list->head = newNode;
     }
     else {
-        currentNode = list->head;
-        while (currentNode->next != NULL) {
-            currentNode = currentNode->next;
+        selectNode = list->head;
+        while (selectNode->next != NULL) {
+            selectNode = selectNode->next;
         }
-        currentNode->next = newNode;
+        selectNode->next = newNode;
     }
 
     list->count++;
@@ -61,11 +61,10 @@ void SLL_insertNodeLast(LinkedList* list, char* str) {
 
 void SLL_insertNodeAt(LinkedList* list, char* str, int index) {
     Node* newNode = SLL_Node_Init(list,str);
-    Node* currentNode = list->head;
-    int count = list->count;
-    int i;
+    Node* selectNode = list->head;
+    int nodeN;
 
-    if(count == 0 || index < 0 || count < index) {
+    if(list->count == 0 || index < 0 || list->count < index) {
         SLL_insertNodeLast(list, str);
         return;
     }
@@ -76,21 +75,23 @@ void SLL_insertNodeAt(LinkedList* list, char* str, int index) {
         list->count++;
     }
     else {
-        for(i=0;i<count;i++) {
-            if(i == index-1) {
-                newNode->next = currentNode->next;
-                currentNode->next = newNode;
+        nodeN = 0;
+        while (selectNode->next != NULL) {
+            if(nodeN == index-1) {
+                newNode->next = selectNode->next;
+                selectNode->next = newNode;
                 list->count++;
-                return;
+                break;
             }
-            currentNode = currentNode->next;
+            nodeN++;
+            selectNode = selectNode->next;
         }
     }
 }
 
 void SLL_removeNodeLast(LinkedList* list) {
     Node* prvNode;
-    Node* currentNode;
+    Node* selectNode;
 
     if (list->head == NULL) return;
 
@@ -98,12 +99,12 @@ void SLL_removeNodeLast(LinkedList* list) {
         free(list->head);
     } else {
         prvNode = list->head;
-        currentNode = list->head->next;
-        while(currentNode->next != NULL) { 
-            prvNode = currentNode;
-            currentNode = currentNode->next;
+        selectNode = list->head->next;
+        while(selectNode->next != NULL) { 
+            prvNode = selectNode;
+            selectNode = selectNode->next;
         }
-        free(currentNode);
+        free(selectNode);
         prvNode->next = NULL;
     }
 
@@ -111,32 +112,31 @@ void SLL_removeNodeLast(LinkedList* list) {
 }
 
 void SLL_removeNodeAt(LinkedList* list, int index) {
-    Node* currentNode = list->head;
+    Node* selectNode = list->head;
     Node *deleteNode;
-    int count = list->count;
-    int i;
+    int nodeN;
 
-    if (list->head == NULL || index < 0 || count < index) {
+    if (list->head == NULL || index < 0 || list->count < index) {
         return;
     }
 
     if (index == 0) {
         list->head = list->head->next;
-        free(currentNode);
+        free(selectNode);
         list->count--;
-        return;
-    }
-
-
-    for(i=0;i<count;i++) {
-        if(i == index-1) {
-            deleteNode = currentNode->next;
-            currentNode->next = currentNode->next->next;
-            free(deleteNode);
-            list->count--;
-            return;
+    } else {
+        nodeN = 0;
+        while (selectNode->next != NULL) {
+            if(nodeN == index-1) {
+                deleteNode = selectNode->next;
+                selectNode->next = selectNode->next->next;
+                free(deleteNode);
+                list->count--;
+                break;
+            }
+            nodeN++;
+            selectNode = selectNode->next;
         }
-            currentNode = currentNode->next;
     }
 }
 
@@ -145,16 +145,16 @@ void SLL_removeNodeAt(LinkedList* list, int index) {
 void SLL_searchNodes(LinkedList* list, char* str) {
     int access[100] = {-1};
     int accessCount = 0, nodeIndex = 0;
-    Node* currentNode = list->head;
+    Node* selectNode = list->head;
     
-    while(currentNode != NULL) {
-        if(!strcmp(currentNode->data, str)) {
+    while(selectNode != NULL) {
+        if(!strcmp(selectNode->data, str)) {
             access[accessCount] = nodeIndex;
             access[accessCount+1] = -1;
             accessCount++;
         }
         nodeIndex++;
-        currentNode = currentNode->next;
+        selectNode = selectNode->next;
     }
 
     if(access[0] == -1) {
@@ -172,13 +172,13 @@ void SLL_searchNodes(LinkedList* list, char* str) {
 }
 
 void SLL_printList(LinkedList* list) {
-    Node *currentNode = list->head;
+    Node *selectNode = list->head;
     printf("List = ");
 
-    while(currentNode != NULL) {
-        printf("%s",currentNode->data);
-        currentNode = currentNode->next;
-        if( currentNode != NULL ) {
+    while(selectNode != NULL) {
+        printf("%s",selectNode->data);
+        selectNode = selectNode->next;
+        if( selectNode != NULL ) {
             printf(", ");
         }
     }
