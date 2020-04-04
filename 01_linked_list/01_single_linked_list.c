@@ -19,7 +19,6 @@ void addLastNode(LinkedList* list, char* str);
 void insertNode(LinkedList* list, char* str, int index);
 void deleteLastNode(LinkedList* list);
 void deleteNode(LinkedList* list, int index);
-LinkedList* searchNodes(LinkedList* list, char* str);
 void printSearchNodes(LinkedList* list, char* str);
 void printLinkedList(LinkedList* list);
 void freeLinkedList(LinkedList* list);
@@ -128,6 +127,7 @@ void deleteNode(LinkedList* list, int index) {
         return;
     }
 
+
     for(i=0;i<count;i++) {
         if(i == index-1) {
             deleteNode = currentNode->next;
@@ -138,43 +138,38 @@ void deleteNode(LinkedList* list, int index) {
         }
             currentNode = currentNode->next;
     }
-    
 }
 
-LinkedList* searchNodes(LinkedList* list, char* str){
-    LinkedList* access = linkedListInit();
-    char intToString[100];
 
+
+void searchNodes(LinkedList* list, char* str) {
+    int access[100] = {-1};
+    int accessCount = 0, nodeIndex = 0;
     Node* currentNode = list->head;
-    int index = 0;
-
+    
     while(currentNode != NULL) {
-        if(!strcmp(currentNode->data,str)) {
-            // Integer to String
-            sprintf(intToString, "%d", index);
-            addLastNode(access,intToString);
+        if(!strcmp(currentNode->data, str)) {
+            access[accessCount] = nodeIndex;
+            access[accessCount+1] = -1;
+            accessCount++;
         }
-        index++;
+        nodeIndex++;
         currentNode = currentNode->next;
     }
 
-    if(access->head != NULL) {
-        return access;
+    if(access[0] == -1) {
+        printf("%s Not Found!\n\n",str);
     } else {
-        freeLinkedList(access);
-        return NULL;
+        for(int i=0; i<100; i++) {
+            if(access[i] == -1) {
+                break;
+            } else {
+                printf("%d ",access[i]);
+            }
+        }
+        printf("\n\n");
     }
-}
 
-void printSearchNodes(LinkedList* list, char* str) {
-    LinkedList* result = searchNodes(list,str);
-
-    if(result != NULL) {
-        printLinkedList(result);
-        freeLinkedList(result);
-    } else {
-        printf("%s Not Found\n\n",str);
-    }
 }
 
 void printLinkedList(LinkedList* list) {
@@ -225,11 +220,10 @@ int main() {
     printLinkedList(party); 
 
     printf("Search Chris\n");
-    printSearchNodes(party,"Chris");
+    searchNodes(party,"Chris");
 
-    printf("Delete Brian\n");
-    deleteNode(party,2);
-    printLinkedList(party);  
+    printf("Search Brian\n");
+    searchNodes(party,"Brian");
 
     printf("Delete the last node\n");
     deleteLastNode(party);
