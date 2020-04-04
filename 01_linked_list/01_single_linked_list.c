@@ -113,6 +113,7 @@ void deleteLastNode(LinkedList* list) {
 
 void deleteNode(LinkedList* list, int index) {
     Node* currentNode = list->head;
+    Node *deleteNode;
     int count = list->count;
     int i;
 
@@ -129,7 +130,9 @@ void deleteNode(LinkedList* list, int index) {
 
     for(i=0;i<count;i++) {
         if(i == index-1) {
+            deleteNode = currentNode->next;
             currentNode->next = currentNode->next->next;
+            free(deleteNode);
             list->count--;
             return;
         }
