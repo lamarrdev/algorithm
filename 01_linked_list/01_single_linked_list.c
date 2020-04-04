@@ -169,7 +169,6 @@ void searchNodes(LinkedList* list, char* str) {
         }
         printf("\n\n");
     }
-
 }
 
 void printLinkedList(LinkedList* list) {
@@ -202,11 +201,10 @@ void freeLinkedList(LinkedList* list) {
 
 int main() {
     LinkedList* party;
-    LinkedList* currentNode;
 
     party = linkedListInit();
     
-    printf("Check the list\n");
+    printf("Create the list\n");
     printLinkedList(party);
 
     printf("Add three nodes\n");
@@ -222,8 +220,9 @@ int main() {
     printf("Search Chris\n");
     searchNodes(party,"Chris");
 
-    printf("Search Brian\n");
-    searchNodes(party,"Brian");
+    printf("Delete Brian\n");
+    deleteNode(party,2);
+    printLinkedList(party);
 
     printf("Delete the last node\n");
     deleteLastNode(party);
