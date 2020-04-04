@@ -203,7 +203,6 @@ void freeLinkedList(LinkedList* list) {
 }
 
 int main() {
-    // 리스트를 선언하고 생성한다.
     LinkedList* party;
     LinkedList* temp;
 
