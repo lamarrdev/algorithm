@@ -220,7 +220,7 @@ int main() {
     printf("Search Chris\n");
     SLL_searchNodes(party,"Chris");
 
-    printf("Delete Brian\n");
+    printf("Remove node at 2\n");
     SLL_removeNodeAt(party,2);
     SLL_printList(party);
 
