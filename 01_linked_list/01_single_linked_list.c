@@ -2,140 +2,238 @@
 #include <stdlib.h>
 #include <string.h>
 
-typedef struct ListNode {
+typedef struct Node {
     char data[10];
-    struct ListNode* link;
-} listNode;
+    struct Node* next;
+} Node;
 
 typedef struct {
-    listNode* head; // 첫번째 노드
-} linkedList_h;
+    Node* head;
+    int count;
+} LinkedList;
 
-linkedList_h* createLinkedList_h(void);
-void freeLinkedList_h(linkedList_h*);
-void addLastNode(linkedList_h*, char*);
-void reverse(linkedList_h*);
-void deleteLastNode(linkedList_h*);
-void printList(linkedList_h*);
 
-linkedList_h* createLinkedList_h(void) {
-    linkedList_h* L;
-    L = (linkedList_h*)malloc(sizeof(linkedList_h));
-    L -> head = NULL;
-    return L;
+LinkedList* linkedListInit();
+Node* nodeInit(LinkedList* list, char* str);
+void addLastNode(LinkedList* list, char* str);
+void insertNode(LinkedList* list, char* str, int index);
+void deleteLastNode(LinkedList* list);
+void deleteNode(LinkedList* list, int index);
+LinkedList* searchNodes(LinkedList* list, char* str);
+void printSearchNodes(LinkedList* list, char* str);
+void printLinkedList(LinkedList* list);
+void freeLinkedList(LinkedList* list);
+
+
+LinkedList* linkedListInit() {
+    LinkedList* new;
+    new = (LinkedList*)malloc(sizeof(LinkedList));
+    new->head = NULL;
+    new->count = 0;
+    return new;
 }
 
-void addLastNode(linkedList_h* L, char* str) {
-    listNode* newNode;
-    listNode* p;
-    newNode = (listNode*)malloc(sizeof(listNode));
-    strcpy(newNode->data, str);
+Node* nodeInit(LinkedList* list, char* str) {
+    Node* node = (Node*)malloc(sizeof(Node));
 
-    newNode->link = NULL;
-    if (L->head == NULL) {
-        L->head = newNode;
-        return;
-    }
-    p = L->head;
-    while (p->link != NULL) {
-        p = p->link;
-    }
-    p ->link = newNode;
+    strcpy(node->data, str);
+    node->next = NULL;
+
+    return node;
 }
 
-void reverse(linkedList_h* L) {
-    listNode *p;
-    listNode *q;
-    listNode *r;
+void addLastNode(LinkedList* list, char* str) {
+    Node* newNode = nodeInit(list,str);
+    Node* temp;
 
-    p = L->head;
-    q = NULL;
-    r = NULL;
-
-    while (p!= NULL) {
-        r = q;
-        q = p;
-        p = p->link;
-        q->link = r;
+    if (list->head == NULL) {
+        list->head = newNode;
     }
-    L->head = q;
-}
-
-
-void deleteLastNode(linkedList_h *L) {
-    listNode* previous;
-    listNode* current;
-    if (L->head == NULL) return;
-
-    if (L->head->link == NULL) {
-        free(L->head);
-        L->head = NULL;
-        return;
-    } else {
-        previous = L->head;
-        current = L->head->link;
-        while(current -> link != NULL) {
-            previous = current;
-            current = current->link;
+    else {
+        temp = list->head;
+        while (temp->next != NULL) {
+            temp = temp->next;
         }
-        free(current);
-        previous->link = NULL;
+        temp->next = newNode;
+    }
+
+    list->count++;
+}
+
+void insertNode(LinkedList* list, char* str, int index) {
+    Node* newNode = nodeInit(list,str);
+    Node* temp = list->head;
+    int count = list->count;
+    int i;
+
+    if(count == 0 || index < 0 || count < index) {
+        addLastNode(list, str);
+        return;
+    }
+
+    if(index == 0) {
+        newNode->next = list->head;
+        list->head = newNode;
+        list->count++;
+    }
+    else {
+        for(i=0;i<count;i++) {
+            if(i == index-1) {
+                newNode->next = temp->next;
+                temp->next = newNode;
+                list->count++;
+                return;
+            }
+                temp = temp->next;
+        }
     }
 }
 
-void freeLinkedList_h(linkedList_h* L) {
-    listNode *p;
-    while(L->head != NULL) {
-        p = L->head;
-        L->head = L->head->link;
-        free(p);
-        p=NULL;
+void deleteLastNode(LinkedList* list) {
+    Node* prvNode;
+    Node* currentNode;
+
+    if (list->head == NULL) return;
+
+    if (list->head->next == NULL) {
+        free(list->head);
+    } else {
+        prvNode = list->head;
+        currentNode = list->head->next;
+        while(currentNode->next != NULL) {
+            prvNode = currentNode;
+            currentNode = currentNode->next;
+        }
+        free(currentNode);
+        prvNode->next = NULL;
+    }
+
+    list->count--;
+}
+
+void deleteNode(LinkedList* list, int index) {
+    Node* temp = list->head;
+    int count = list->count;
+    int i;
+
+    if (list->head == NULL || index < 0 || count < index) {
+        return;
+    }
+
+    if (index == 0) {
+        list->head = list->head->next;
+        free(temp);
+        list->count--;
+        return;
+    }
+
+    for(i=0;i<count;i++) {
+        if(i == index-1) {
+            temp->next = temp->next->next;
+            list->count--;
+            return;
+        }
+            temp = temp->next;
+    }
+    
+}
+
+LinkedList* searchNodes(LinkedList* list, char* str){
+    LinkedList* access = linkedListInit();
+    char intToString[100];
+
+    Node* temp = list->head;
+    int index = 0;
+
+    while(temp != NULL) {
+        if(!strcmp(temp->data,str)) {
+            // Integer to String
+            sprintf(intToString, "%d", index);
+            addLastNode(access,intToString);
+        }
+        index++;
+        temp = temp->next;
+    }
+
+    if(access->head != NULL) {
+        return access;
+    } else {
+        freeLinkedList(access);
+        return NULL;
     }
 }
 
-void printList(linkedList_h* L) {
-    listNode *p;
-    printf("List = (");
-    p= L->head;
-    while(p != NULL) {
-        printf("%s",p->data);
-        p = p->link;
-        if( p != NULL ) {
+void printSearchNodes(LinkedList* list, char* str) {
+    LinkedList* result = searchNodes(list,str);
+
+    if(result != NULL) {
+        printLinkedList(result);
+        freeLinkedList(result);
+    } else {
+        printf("%s Not Found\n\n",str);
+    }
+}
+
+void printLinkedList(LinkedList* list) {
+    Node *temp = list->head;
+    printf("List = ");
+
+    while(temp != NULL) {
+        printf("%s",temp->data);
+        temp = temp->next;
+        if( temp != NULL ) {
             printf(", ");
         }
     }
-    printf(") \n");
+    printf(" (Total = %d)\n",list->count);
 
+    printf("\n");
+} 
+
+void freeLinkedList(LinkedList* list) {
+    Node *del = list->head;
+
+    while(del != NULL) {
+        list->head = list->head->next;
+        free(del);
+        del = list->head;
+    }
+
+    free(list);
 }
 
 int main() {
-    linkedList_h *party;
-    party = createLinkedList_h();
-    printf("1. 공백 리스트 생성! \n");
-    printList(party);
+    // 리스트를 선언하고 생성한다.
+    LinkedList* party;
+    LinkedList* temp;
 
-    printf("2. 리스트에 노드 3개 추가 \n");
-    addLastNode(party, "John");
-    addLastNode(party, "Jenny");
-    addLastNode(party, "Mike");
-    printList(party);
+    party = linkedListInit();
+    
+    printf("Check the list\n");
+    printLinkedList(party);
 
-    printf("3. 리스트 마지막에 노드 추가 \n");
-    addLastNode(party, "Sunny");
-    printList(party);
+    printf("Add three nodes\n");
+    addLastNode(party,"Ali");
+    addLastNode(party,"Brian");
+    addLastNode(party,"Chris");
+    printLinkedList(party);
 
-    printf("4. 마지막 노드 삭제하기 \n");
+    printf("Insert node\n");
+    insertNode(party,"Chris",1);
+    printLinkedList(party); 
+
+    printf("Search Chris\n");
+    printSearchNodes(party,"Chris");
+
+    printf("Delete Brian\n");
+    deleteNode(party,2);
+    printLinkedList(party);  
+
+    printf("Delete the last node\n");
     deleteLastNode(party);
-    printList(party);
+    printLinkedList(party);
 
-    printf("5. 리스트 원소를 역순으로 변환하기 \n");
-    reverse(party);
-    printList(party);
-
-    printf("6. 리스트 공간을 해제하여, 공백 리스트 상태로 만들기 \n");
-    freeLinkedList_h(party);
-    printList(party);
+    freeLinkedList(party);
 
     return 0;
-
 }
