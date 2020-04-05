@@ -15,9 +15,9 @@ typedef struct {
 
 LinkedList* SLL_List_Init();
 Node* SLL_Node_Init(LinkedList* list, char* str);
-void SLL_insertNodeLast(LinkedList* list, char* str);
+void SLL_insertLastNode(LinkedList* list, char* str);
 void SLL_insertNodeAt(LinkedList* list, char* str, int index);
-void SLL_removeNodeLast(LinkedList* list);
+void SLL_removeLastNode(LinkedList* list);
 void SLL_removeNodeAt(LinkedList* list, int index);
 void SLL_searchNodes(LinkedList* list, char* str);
 void SLL_printList(LinkedList* list);
@@ -41,7 +41,7 @@ Node* SLL_Node_Init(LinkedList* list, char* str) {
     return node;
 }
 
-void SLL_insertNodeLast(LinkedList* list, char* str) {
+void SLL_insertLastNode(LinkedList* list, char* str) {
     Node* newNode = SLL_Node_Init(list,str);
     Node* selectNode;
 
@@ -60,14 +60,16 @@ void SLL_insertNodeLast(LinkedList* list, char* str) {
 }
 
 void SLL_insertNodeAt(LinkedList* list, char* str, int index) {
-    Node* newNode = SLL_Node_Init(list,str);
+    Node* newNode;
     Node* selectNode = list->head;
     int nodeN;
 
-    if(list->count == 0 || index < 0 || list->count < index) {
-        SLL_insertNodeLast(list, str);
+    if(list->count == 0 || index < 0 || list->count-1 < index) {
+        SLL_insertLastNode(list, str);
         return;
     }
+    
+    newNode = SLL_Node_Init(list,str);
 
     if(index == 0) {
         newNode->next = list->head;
@@ -89,7 +91,7 @@ void SLL_insertNodeAt(LinkedList* list, char* str, int index) {
     }
 }
 
-void SLL_removeNodeLast(LinkedList* list) {
+void SLL_removeLastNode(LinkedList* list) {
     Node* prvNode;
     Node* selectNode;
 
@@ -116,7 +118,7 @@ void SLL_removeNodeAt(LinkedList* list, int index) {
     Node *deleteNode;
     int nodeN;
 
-    if (list->head == NULL || index < 0 || list->count < index) {
+    if (list->head == NULL || index < 0 || list->count-1 < index) {
         return;
     }
 
@@ -208,13 +210,17 @@ int main() {
     SLL_printList(party);
 
     printf("Add three nodes\n");
-    SLL_insertNodeLast(party,"Ali");
-    SLL_insertNodeLast(party,"Brian");
-    SLL_insertNodeLast(party,"Chris");
+    SLL_insertLastNode(party,"Ali");
+    SLL_insertLastNode(party,"Brian");
+    SLL_insertLastNode(party,"Chris");
     SLL_printList(party);
 
     printf("Insert node at 1\n");
     SLL_insertNodeAt(party,"Chris",1);
+    SLL_printList(party); 
+
+    printf("Insert node at 3\n");
+    SLL_insertNodeAt(party,"Makiko",3);
     SLL_printList(party); 
 
     printf("Search Chris\n");
@@ -224,8 +230,12 @@ int main() {
     SLL_removeNodeAt(party,2);
     SLL_printList(party);
 
+    printf("Remove node at 1\n");
+    SLL_removeNodeAt(party,1);
+    SLL_printList(party);
+
     printf("Delete the last node\n");
-    SLL_removeNodeLast(party);
+    SLL_removeLastNode(party);
     SLL_printList(party);
 
     SLL_destroyList(party);
