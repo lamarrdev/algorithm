@@ -47,10 +47,10 @@ Node* DLL_Node_Init(LinkedList* list, char* str) {
 Node* DLL_findFastRoot(LinkedList* list, int index) {
     Node* selectNode = list->head;
     int totalNodes = list->count;
-    int basis = totalNodes >> 1; // 비트 연산 나누기 2
+    int median = totalNodes >> 1; // 비트 연산 나누기 2
     int i;
 
-    if(index <= basis) {
+    if(index <= median) {
         printf("next -> %d\n",index);
         for(i=0;i<index;i++) {
             selectNode = selectNode->next;
@@ -88,7 +88,7 @@ void DLL_insertNodeAt(LinkedList* list, char* str, int index) {
     Node* newNode;
     Node* selectNode = list->head;
     int totalNodes = list->count;
-    int basis; // 기준
+    int median; // 중앙값
     int i;
 
     if(totalNodes == 0 || index < 0 || totalNodes < index) {
@@ -98,22 +98,14 @@ void DLL_insertNodeAt(LinkedList* list, char* str, int index) {
 
     newNode = DLL_Node_Init(list,str);
 
-    if(index == 0) {
-        newNode->next = list->head;
-        newNode->prev = list->head->prev;
-        list->head->prev->next = newNode;
-        list->head = newNode;
-    }
-    else {
+    if(index != 0) {
         selectNode = DLL_findFastRoot(list,index);
-
-        newNode->next = selectNode;
-        newNode->prev = selectNode->prev;
-        selectNode->prev->next = newNode;
-        selectNode->prev = newNode;
-
     }
-    
+
+    newNode->next = selectNode;
+    newNode->prev = selectNode->prev;
+    selectNode->prev->next = newNode;
+    selectNode->prev = newNode;
     list->count++;
 }
 
@@ -142,59 +134,72 @@ void DLL_removeLastNode(LinkedList* list) {
 void DLL_removeNodeAt(LinkedList* list, int index) {
     Node* selectNode = list->head;
     int totalNodes = list->count;
-    int basis; // 기준
+    int median; // 기준
     int i;
 
     if(list->head == NULL || index < 0 || totalNodes-1 < index) {
         return;
     }
 
-    if(index == 0) {
-        selectNode  = list->head;
-        list->head->prev->next = list->head->next;
-        list->head->next->prev = list->head->prev;
-        list->head = list->head->next;
-        free(selectNode);
-    }
-    else {
+    if(index != 0) {
         selectNode = DLL_findFastRoot(list,index);
-
-        selectNode->prev->next = selectNode->next;
-        selectNode->next->prev = selectNode->prev;
-        free(selectNode);
     }
 
+    selectNode->prev->next = selectNode->next;
+    selectNode->next->prev = selectNode->prev;
+    free(selectNode);
     list->count--;
 }
 
-// void DLL_searchNodes(LinkedList* list, char* str) {
-//     int access[100] = {-1};
-//     int accessCount = 0, nodeIndex = 0;
-//     Node* selectNode = list->head;
+void DLL_searchNodes(LinkedList* list, char* str) {
+    int access[100] = {-1};
+    int accessCount = 0, nodeIndex = 0;
     
-//     while(selectNode != NULL) {
-//         if(!strcmp(selectNode->data, str)) {
-//             access[accessCount] = nodeIndex;
-//             access[accessCount+1] = -1;
-//             accessCount++;
-//         }
-//         nodeIndex++;
-//         selectNode = selectNode->next;
-//     }
+    Node* s_prevNode = list->head;
+    Node* s_nextNode = list->head;
+    int i;
+    int basis = list->count >> 1;
 
-//     if(access[0] == -1) {
-//         printf("%s Not Found!\n\n",str);
-//     } else {
-//         for(int i=0; i<100; i++) {
-//             if(access[i] == -1) {
-//                 break;
-//             } else {
-//                 printf("%d ",access[i]);
-//             }
-//         }
-//         printf("\n\n");
-//     }
-// }
+    for(int i=0; i<basis; i++) {
+
+        if(i==0 || (list->count >> 1 == 0 && i == basis-1)) {
+            if(!strcmp(s_nextNode->data,str)) {
+                access[accessCount] = nodeIndex;
+                access[accessCount+1] = -1;
+                accessCount++;
+            }
+        }
+        else {
+            if(!strcmp(s_nextNode->data,str)) {
+                access[accessCount] = nodeIndex;
+                access[accessCount+1] = -1;
+                accessCount++;
+            } else if(!strcmp(s_prevNode->data,str)) {
+                access[accessCount] = list->count - i;
+                access[accessCount+1] = -1;
+                accessCount++;
+            }            
+        }
+
+        s_prevNode = s_prevNode->prev;
+        s_nextNode = s_nextNode->next;
+        nodeIndex++;
+    }
+
+
+    if(access[0] == -1) {
+        printf("%s Not Found!\n\n",str);
+    } else {
+        for(int i=0; i<100; i++) {
+            if(access[i] == -1) {
+                break;
+            } else {
+                printf("%d ",access[i]);
+            }
+        }
+        printf("\n\n");
+    }
+}
 
 void DLL_printList(LinkedList* list) {
     Node *selectNode = list->head;
@@ -240,25 +245,24 @@ int main() {
     printf("Create the list\n");
     DLL_printList(party);
 
-    printf("Add three nodes\n");
-    // DLL_insertLastNode(party,"Ali");
-    // DLL_insertLastNode(party,"Brian");
-    // DLL_insertLastNode(party,"Kathy");
-    // DLL_insertLastNode(party,"Yui");
-    // DLL_insertLastNode(party,"Lina");
-    // DLL_insertLastNode(party,"Humba");
+    printf("Add five nodes\n");
+    DLL_insertLastNode(party,"Ali");
+    DLL_insertLastNode(party,"Brian");
+    DLL_insertLastNode(party,"Kathy");
+    DLL_insertLastNode(party,"Ali");
+    DLL_insertLastNode(party,"Lina");
     DLL_printList(party);
 
     printf("Insert node at 2 Chris\n");
     DLL_insertNodeAt(party,"Chris",2);
     DLL_printList(party); 
 
-    printf("Insert node at 5 Jun\n");
-    DLL_insertNodeAt(party,"Jun",5);
+    printf("Insert node at 3 Jun\n");
+    DLL_insertNodeAt(party,"Jun",3);
     DLL_printList(party); 
 
-    // printf("Search Chris\n");
-    // DLL_searchNodes(party,"Chris");
+    printf("Search Ali\n");
+    DLL_searchNodes(party,"Ali");
 
     printf("Remove node at 1\n");
     DLL_removeNodeAt(party,1);
