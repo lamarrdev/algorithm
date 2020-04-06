@@ -100,7 +100,6 @@ void SLL_removeLastNode(LinkedList* list) {
     if (list->head->next == NULL) {
         free(list->head);
     } else {
-        prvNode = list->head;
         selectNode = list->head;
         while(selectNode->next != NULL) { 
             prvNode = selectNode;
