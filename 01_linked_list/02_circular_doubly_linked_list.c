@@ -15,18 +15,18 @@ typedef struct {
 
 
 LinkedList* DLL_List_Init();
-Node* DLL_Node_Init(LinkedList* list, char* str);
-Node* DLL_findFastRoot(LinkedList* list, int index);
-void DLL_insertLastNode(LinkedList* list, char* str);
-void DLL_insertNodeAt(LinkedList* list, char* str, int index);
-void DLL_removeLastNode(LinkedList* list);
-void DLL_removeNodeAt(LinkedList* list, int index);
-void DLL_searchNodes(LinkedList* list, char* str);
-void DLL_printList(LinkedList* list);
-void DLL_destroyList(LinkedList* list);
+Node* CDLL_Node_Init(LinkedList* list, char* str);
+Node* CDLL_findFastRoot(LinkedList* list, int index);
+void CDLL_insertLastNode(LinkedList* list, char* str);
+void CDLL_insertNodeAt(LinkedList* list, char* str, int index);
+void CDLL_removeLastNode(LinkedList* list);
+void CDLL_removeNodeAt(LinkedList* list, int index);
+void CDLL_searchNodes(LinkedList* list, char* str);
+void CDLL_printList(LinkedList* list);
+void CDLL_destroyList(LinkedList* list);
 
 
-LinkedList* DLL_List_Init() {
+LinkedList* CDLL_List_Init() {
     LinkedList* new;
     new = (LinkedList*)malloc(sizeof(LinkedList));
     new->head = NULL;
@@ -34,7 +34,7 @@ LinkedList* DLL_List_Init() {
     return new;
 }
 
-Node* DLL_Node_Init(LinkedList* list, char* str) {
+Node* CDLL_Node_Init(LinkedList* list, char* str) {
     Node* node = (Node*)malloc(sizeof(Node));
 
     strcpy(node->data, str);
@@ -44,7 +44,7 @@ Node* DLL_Node_Init(LinkedList* list, char* str) {
     return node;
 }
 
-Node* DLL_findFastRoot(LinkedList* list, int index) {
+Node* CDLL_findFastRoot(LinkedList* list, int index) {
     Node* selectNode = list->head;
     int totalNodes = list->count;
     int median = totalNodes >> 1; // 비트 연산 나누기 2
@@ -66,8 +66,8 @@ Node* DLL_findFastRoot(LinkedList* list, int index) {
     return selectNode;
 }
 
-void DLL_insertLastNode(LinkedList* list, char* str) {
-    Node* newNode = DLL_Node_Init(list,str);
+void CDLL_insertLastNode(LinkedList* list, char* str) {
+    Node* newNode = CDLL_Node_Init(list,str);
 
     if (list->head == NULL) {
         list->head = newNode;
@@ -84,7 +84,7 @@ void DLL_insertLastNode(LinkedList* list, char* str) {
     list->count++;
 }
 
-void DLL_insertNodeAt(LinkedList* list, char* str, int index) {
+void CDLL_insertNodeAt(LinkedList* list, char* str, int index) {
     Node* newNode;
     Node* selectNode = list->head;
     int totalNodes = list->count;
@@ -92,14 +92,14 @@ void DLL_insertNodeAt(LinkedList* list, char* str, int index) {
     int i;
 
     if(totalNodes == 0 || index < 0 || totalNodes < index) {
-        DLL_insertLastNode(list, str);
+        CDLL_insertLastNode(list, str);
         return;
     }
 
-    newNode = DLL_Node_Init(list,str);
+    newNode = CDLL_Node_Init(list,str);
 
     if(index != 0) {
-        selectNode = DLL_findFastRoot(list,index);
+        selectNode = CDLL_findFastRoot(list,index);
     }
 
     newNode->next = selectNode;
@@ -109,7 +109,7 @@ void DLL_insertNodeAt(LinkedList* list, char* str, int index) {
     list->count++;
 }
 
-void DLL_removeLastNode(LinkedList* list) {
+void CDLL_removeLastNode(LinkedList* list) {
     Node* prvNode;
     Node* selectNode = list->head;
 
@@ -131,7 +131,7 @@ void DLL_removeLastNode(LinkedList* list) {
     list->count--;
 }
 
-void DLL_removeNodeAt(LinkedList* list, int index) {
+void CDLL_removeNodeAt(LinkedList* list, int index) {
     Node* selectNode = list->head;
     int totalNodes = list->count;
     int median; // 기준
@@ -142,7 +142,7 @@ void DLL_removeNodeAt(LinkedList* list, int index) {
     }
 
     if(index != 0) {
-        selectNode = DLL_findFastRoot(list,index);
+        selectNode = CDLL_findFastRoot(list,index);
     }
 
     selectNode->prev->next = selectNode->next;
@@ -151,7 +151,7 @@ void DLL_removeNodeAt(LinkedList* list, int index) {
     list->count--;
 }
 
-void DLL_searchNodes(LinkedList* list, char* str) {
+void CDLL_searchNodes(LinkedList* list, char* str) {
     int access[100] = {-1};
     int accessCount = 0, nodeIndex = 0;
     
@@ -201,7 +201,7 @@ void DLL_searchNodes(LinkedList* list, char* str) {
     }
 }
 
-void DLL_printList(LinkedList* list) {
+void CDLL_printList(LinkedList* list) {
     Node *selectNode = list->head;
     int tailCheck = 0;
     int i;
@@ -221,7 +221,7 @@ void DLL_printList(LinkedList* list) {
     printf("\n");
 } 
 
-void DLL_destroyList(LinkedList* list) {
+void CDLL_destroyList(LinkedList* list) {
     Node *del = list->head;
     
     if(list->head != NULL) {
@@ -240,43 +240,43 @@ void DLL_destroyList(LinkedList* list) {
 int main() {
     LinkedList* party;
 
-    party = DLL_List_Init();
+    party = CDLL_List_Init();
     
     printf("Create the list\n");
-    DLL_printList(party);
+    CDLL_printList(party);
 
     printf("Add five nodes\n");
-    DLL_insertLastNode(party,"Ali");
-    DLL_insertLastNode(party,"Brian");
-    DLL_insertLastNode(party,"Kathy");
-    DLL_insertLastNode(party,"Ali");
-    DLL_insertLastNode(party,"Lina");
-    DLL_printList(party);
+    CDLL_insertLastNode(party,"Ali");
+    CDLL_insertLastNode(party,"Brian");
+    CDLL_insertLastNode(party,"Kathy");
+    CDLL_insertLastNode(party,"Ali");
+    CDLL_insertLastNode(party,"Lina");
+    CDLL_printList(party);
 
     printf("Insert node at 2 Chris\n");
-    DLL_insertNodeAt(party,"Chris",2);
-    DLL_printList(party); 
+    CDLL_insertNodeAt(party,"Chris",2);
+    CDLL_printList(party); 
 
     printf("Insert node at 3 Jun\n");
-    DLL_insertNodeAt(party,"Jun",3);
-    DLL_printList(party); 
+    CDLL_insertNodeAt(party,"Jun",3);
+    CDLL_printList(party); 
 
     printf("Search Ali\n");
-    DLL_searchNodes(party,"Ali");
+    CDLL_searchNodes(party,"Ali");
 
     printf("Remove node at 1\n");
-    DLL_removeNodeAt(party,1);
-    DLL_printList(party);
+    CDLL_removeNodeAt(party,1);
+    CDLL_printList(party);
 
     printf("Remove node at 4\n");
-    DLL_removeNodeAt(party,4);
-    DLL_printList(party);
+    CDLL_removeNodeAt(party,4);
+    CDLL_printList(party);
 
     printf("Reomove the last node\n");
-    DLL_removeLastNode(party);
-    DLL_printList(party);
+    CDLL_removeLastNode(party);
+    CDLL_printList(party);
 
-    DLL_destroyList(party);
+    CDLL_destroyList(party);
 
     return 0;
 }
