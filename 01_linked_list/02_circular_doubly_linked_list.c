@@ -88,8 +88,6 @@ void CDLL_insertNodeAt(LinkedList* list, char* str, int index) {
     Node* newNode;
     Node* selectNode = list->head;
     int totalNodes = list->count;
-    int median; // 중앙값
-    int i;
 
     if(totalNodes == 0 || index < 0 || totalNodes < index) {
         CDLL_insertLastNode(list, str);
@@ -134,8 +132,6 @@ void CDLL_removeLastNode(LinkedList* list) {
 void CDLL_removeNodeAt(LinkedList* list, int index) {
     Node* selectNode = list->head;
     int totalNodes = list->count;
-    int median; // 기준
-    int i;
 
     if(list->head == NULL || index < 0 || totalNodes-1 < index) {
         return;
@@ -154,33 +150,25 @@ void CDLL_removeNodeAt(LinkedList* list, int index) {
 void CDLL_searchNodes(LinkedList* list, char* str) {
     int access[100] = {-1};
     int accessCount = 0, nodeIndex = 0;
-    
-    Node* s_prevNode = list->head;
+    Node* s_prevNode = list->head->prev;
     Node* s_nextNode = list->head;
-    int i;
-    int basis = list->count >> 1;
+    int loopCount = list->count%2 ? (list->count>>1)+1 : list->count>>1;
 
-    for(int i=0; i<basis; i++) {
+    for(int i=1; i<=loopCount; i++) {
 
-        if(i==0 || (list->count >> 1 == 0 && i == basis-1)) {
-            if(!strcmp(s_nextNode->data,str)) {
-                access[accessCount] = nodeIndex;
-                access[accessCount+1] = -1;
-                accessCount++;
-            }
+        if(!strcmp(s_nextNode->data,str)) {
+            access[accessCount] = nodeIndex;
+            access[accessCount+1] = -1;
+            accessCount++;
         }
-        else {
-            if(!strcmp(s_nextNode->data,str)) {
-                access[accessCount] = nodeIndex;
-                access[accessCount+1] = -1;
-                accessCount++;
-            } else if(!strcmp(s_prevNode->data,str)) {
-                access[accessCount] = list->count - i;
-                access[accessCount+1] = -1;
-                accessCount++;
-            }            
+        if(i == loopCount && list->count%2 == 1) {
+            break;
         }
-
+        if(!strcmp(s_prevNode->data,str)) {
+            access[accessCount] = list->count - i;
+            access[accessCount+1] = -1;
+            accessCount++;
+        }            
         s_prevNode = s_prevNode->prev;
         s_nextNode = s_nextNode->next;
         nodeIndex++;
@@ -245,31 +233,24 @@ int main() {
     printf("Create the list\n");
     CDLL_printList(party);
 
-    printf("Add five nodes\n");
+    printf("Add two nodes\n");
     CDLL_insertLastNode(party,"Ali");
-    CDLL_insertLastNode(party,"Brian");
-    CDLL_insertLastNode(party,"Kathy");
-    CDLL_insertLastNode(party,"Ali");
-    CDLL_insertLastNode(party,"Lina");
+    CDLL_insertLastNode(party,"Joly");
     CDLL_printList(party);
 
-    printf("Insert node at 2 Chris\n");
-    CDLL_insertNodeAt(party,"Chris",2);
+    printf("Insert Chris node at 1 \n");
+    CDLL_insertNodeAt(party,"Chris",1);
     CDLL_printList(party); 
 
-    printf("Insert node at 3 Jun\n");
-    CDLL_insertNodeAt(party,"Jun",3);
+    printf("Insert Ali node at 2 \n");
+    CDLL_insertNodeAt(party,"Ali",2);
     CDLL_printList(party); 
 
     printf("Search Ali\n");
     CDLL_searchNodes(party,"Ali");
 
-    printf("Remove node at 1\n");
-    CDLL_removeNodeAt(party,1);
-    CDLL_printList(party);
-
-    printf("Remove node at 4\n");
-    CDLL_removeNodeAt(party,4);
+    printf("Remove node at 2\n");
+    CDLL_removeNodeAt(party,2);
     CDLL_printList(party);
 
     printf("Reomove the last node\n");
