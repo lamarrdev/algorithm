@@ -14,7 +14,7 @@ typedef struct {
 
 
 LinkedList* SLL_List_Init();
-Node* SLL_Node_Init(LinkedList* list, char* str);
+Node* SLL_Node_Init(char* str);
 void SLL_insertLastNode(LinkedList* list, char* str);
 void SLL_insertNodeAt(LinkedList* list, char* str, int index);
 void SLL_removeLastNode(LinkedList* list);
@@ -32,7 +32,7 @@ LinkedList* SLL_List_Init() {
     return new;
 }
 
-Node* SLL_Node_Init(LinkedList* list, char* str) {
+Node* SLL_Node_Init(char* str) {
     Node* node = (Node*)malloc(sizeof(Node));
 
     strcpy(node->data, str);
@@ -42,7 +42,7 @@ Node* SLL_Node_Init(LinkedList* list, char* str) {
 }
 
 void SLL_insertLastNode(LinkedList* list, char* str) {
-    Node* newNode = SLL_Node_Init(list,str);
+    Node* newNode = SLL_Node_Init(str);
     Node* selectNode;
 
     if (list->head == NULL) {
@@ -69,7 +69,7 @@ void SLL_insertNodeAt(LinkedList* list, char* str, int index) {
         return;
     }
     
-    newNode = SLL_Node_Init(list,str);
+    newNode = SLL_Node_Init(str);
 
     if(index == 0) {
         newNode->next = list->head;

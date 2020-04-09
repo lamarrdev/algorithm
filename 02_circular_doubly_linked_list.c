@@ -15,7 +15,7 @@ typedef struct {
 
 
 LinkedList* DLL_List_Init();
-Node* CDLL_Node_Init(LinkedList* list, char* str);
+Node* CDLL_Node_Init(char* str);
 Node* CDLL_findFastRoot(LinkedList* list, int index);
 void CDLL_insertLastNode(LinkedList* list, char* str);
 void CDLL_insertNodeAt(LinkedList* list, char* str, int index);
@@ -34,7 +34,7 @@ LinkedList* CDLL_List_Init() {
     return new;
 }
 
-Node* CDLL_Node_Init(LinkedList* list, char* str) {
+Node* CDLL_Node_Init(char* str) {
     Node* node = (Node*)malloc(sizeof(Node));
 
     strcpy(node->data, str);
@@ -67,7 +67,7 @@ Node* CDLL_findFastRoot(LinkedList* list, int index) {
 }
 
 void CDLL_insertLastNode(LinkedList* list, char* str) {
-    Node* newNode = CDLL_Node_Init(list,str);
+    Node* newNode = CDLL_Node_Init(str);
 
     if (list->head == NULL) {
         list->head = newNode;
@@ -94,7 +94,7 @@ void CDLL_insertNodeAt(LinkedList* list, char* str, int index) {
         return;
     }
 
-    newNode = CDLL_Node_Init(list,str);
+    newNode = CDLL_Node_Init(str);
 
     if(index != 0) {
         selectNode = CDLL_findFastRoot(list,index);
@@ -253,7 +253,7 @@ int main() {
     CDLL_removeNodeAt(party,2);
     CDLL_printList(party);
 
-    printf("Reomove the last node\n");
+    printf("Remove the last node\n");
     CDLL_removeLastNode(party);
     CDLL_printList(party);
 
