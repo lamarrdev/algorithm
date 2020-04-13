@@ -3,62 +3,59 @@
 #include <string.h>
 
 typedef struct Node {
-    char data[10];
+    char* data;
     struct Node* prev;
     struct Node* next;
 } Node;
 
 typedef struct {
     Node* head;
-    int count;
+    int size;
 } LinkedList;
-
 
 LinkedList* DLL_List_Init();
 Node* CDLL_Node_Init(char* str);
-Node* CDLL_findFastRoot(LinkedList* list, int index);
+Node* CDLL_findFastRoot(LinkedList* list, int n);
 void CDLL_insertLastNode(LinkedList* list, char* str);
-void CDLL_insertNodeAt(LinkedList* list, char* str, int index);
+void CDLL_insertNodeAt(LinkedList* list, char* str, int n);
 void CDLL_removeLastNode(LinkedList* list);
-void CDLL_removeNodeAt(LinkedList* list, int index);
+void CDLL_removeNodeAt(LinkedList* list, int n);
 void CDLL_searchNodes(LinkedList* list, char* str);
 void CDLL_printList(LinkedList* list);
 void CDLL_destroyList(LinkedList* list);
 
-
 LinkedList* CDLL_List_Init() {
-    LinkedList* new;
-    new = (LinkedList*)malloc(sizeof(LinkedList));
-    new->head = NULL;
-    new->count = 0;
-    return new;
+    LinkedList* newList;
+    newList = (LinkedList*)malloc(sizeof(LinkedList));
+    newList->head = NULL;
+    newList->size = 0;
+    return newList;
 }
 
 Node* CDLL_Node_Init(char* str) {
-    Node* node = (Node*)malloc(sizeof(Node));
-
-    strcpy(node->data, str);
-    node->prev = NULL;
-    node->next = NULL;
-
-    return node;
+    Node* newNode = (Node*)malloc(sizeof(Node));
+    newNode->data = (char*)malloc(strlen(str)+1);
+    strcpy(newNode->data, str);
+    newNode->prev = NULL;
+    newNode->next = NULL;
+    return newNode;
 }
 
-Node* CDLL_findFastRoot(LinkedList* list, int index) {
+Node* CDLL_findFastRoot(LinkedList* list, int n) {
     Node* selectNode = list->head;
-    int totalNodes = list->count;
-    int median = totalNodes >> 1; // 비트 연산 나누기 2
+    int totalNodes = list->size;
+    int median = totalNodes >> 1;
     int i;
 
-    if(index <= median) {
-        printf("next -> %d\n",index);
-        for(i=0;i<index;i++) {
+    if(n <= median) {
+        printf("next -> %d\n",n);
+        for(i=0;i<n;i++) {
             selectNode = selectNode->next;
         }
     }
     else {
-        printf("prev <- %d\n",totalNodes-index);
-        for(i=0;i< totalNodes-index; i++) {
+        printf("prev <- %d\n",totalNodes-n);
+        for(i=0;i< totalNodes-n; i++) {
             selectNode = selectNode->prev;
         }
     }
@@ -80,35 +77,36 @@ void CDLL_insertLastNode(LinkedList* list, char* str) {
         list->head->prev->next = newNode;
         list->head->prev = newNode;
     }
-
-    list->count++;
+    list->size++;
 }
 
-void CDLL_insertNodeAt(LinkedList* list, char* str, int index) {
+void CDLL_insertNodeAt(LinkedList* list, char* str, int n) {
     Node* newNode;
     Node* selectNode = list->head;
-    int totalNodes = list->count;
 
-    if(totalNodes == 0 || index < 0 || totalNodes < index) {
+    if(list->size == 0 || n < 0 || list->size-1 < n) {
         CDLL_insertLastNode(list, str);
         return;
     }
 
     newNode = CDLL_Node_Init(str);
-
-    if(index != 0) {
-        selectNode = CDLL_findFastRoot(list,index);
+    if(n==0) {
+        newNode->next = list->head;
+        newNode->prev = list->head->prev;
+        list->head->prev->next = newNode;
+        list->head = newNode;
     }
-
-    newNode->next = selectNode;
-    newNode->prev = selectNode->prev;
-    selectNode->prev->next = newNode;
-    selectNode->prev = newNode;
-    list->count++;
+    else {
+        selectNode = CDLL_findFastRoot(list,n);
+        newNode->next = selectNode;
+        newNode->prev = selectNode->prev;
+        selectNode->prev->next = newNode;
+        selectNode->prev = newNode;
+    }
+    list->size++;
 }
 
 void CDLL_removeLastNode(LinkedList* list) {
-    Node* prvNode;
     Node* selectNode = list->head;
 
     if (list->head == NULL) return;
@@ -120,64 +118,68 @@ void CDLL_removeLastNode(LinkedList* list) {
         selectNode = list->head->next;
         list->head->next = list->head;
         list->head->prev = list->head;
-    } else {
+    }
+    else {
         selectNode = list->head->prev;
         list->head->prev = list->head->prev->prev;
         list->head->prev->next = list->head;
     }
     free(selectNode);
-    list->count--;
+    list->size--;
 }
 
-void CDLL_removeNodeAt(LinkedList* list, int index) {
+void CDLL_removeNodeAt(LinkedList* list, int n) {
     Node* selectNode = list->head;
-    int totalNodes = list->count;
+    int totalNodes = list->size;
 
-    if(list->head == NULL || index < 0 || totalNodes-1 < index) {
+    if(list->head == NULL || n < 0 || totalNodes-1 < n) {
         return;
     }
-
-    if(index != 0) {
-        selectNode = CDLL_findFastRoot(list,index);
+    if(n==0) {
+        selectNode = list->head;
+        list->head->next->prev = list->head->prev;
+        list->head->prev->next = list->head->next;
+        list->head = list->head->next;
     }
-
-    selectNode->prev->next = selectNode->next;
-    selectNode->next->prev = selectNode->prev;
+    else {
+        selectNode = CDLL_findFastRoot(list,n);
+        selectNode->prev->next = selectNode->next;
+        selectNode->next->prev = selectNode->prev;
+    }
     free(selectNode);
-    list->count--;
+    list->size--;
 }
 
 void CDLL_searchNodes(LinkedList* list, char* str) {
     int access[100] = {-1};
-    int accessCount = 0, nodeIndex = 0;
+    int accessCount = 0, nodeN = 0;
     Node* s_prevNode = list->head->prev;
     Node* s_nextNode = list->head;
-    int loopCount = list->count%2 ? (list->count>>1)+1 : list->count>>1;
+    int loopCount = list->size%2 ? (list->size>>1)+1 : list->size>>1;
 
     for(int i=1; i<=loopCount; i++) {
-
         if(!strcmp(s_nextNode->data,str)) {
-            access[accessCount] = nodeIndex;
+            access[accessCount] = nodeN;
             access[accessCount+1] = -1;
             accessCount++;
         }
-        if(i == loopCount && list->count%2 == 1) {
+        if(i == loopCount && list->size%2 == 1) {
             break;
         }
         if(!strcmp(s_prevNode->data,str)) {
-            access[accessCount] = list->count - i;
+            access[accessCount] = list->size - i;
             access[accessCount+1] = -1;
             accessCount++;
-        }            
+        }
         s_prevNode = s_prevNode->prev;
         s_nextNode = s_nextNode->next;
-        nodeIndex++;
+        nodeN++;
     }
-
 
     if(access[0] == -1) {
         printf("%s Not Found!\n\n",str);
-    } else {
+    }
+    else {
         for(int i=0; i<100; i++) {
             if(access[i] == -1) {
                 break;
@@ -191,35 +193,32 @@ void CDLL_searchNodes(LinkedList* list, char* str) {
 
 void CDLL_printList(LinkedList* list) {
     Node *selectNode = list->head;
-    int tailCheck = 0;
     int i;
     printf("List = ");
 
-
-    while(tailCheck < list->count) {
+    for(i=0; i<list->size; i++) {
         printf("%s",selectNode->data);
         selectNode = selectNode->next;
-        tailCheck++;
-        if( tailCheck != list->count ) {
+        if(i != list->size-1) {
             printf(", ");
         }
     }
-    printf(" (Total = %d)\n",list->count);
+    printf(" (Total = %d)\n",list->size);
 
     printf("\n");
 } 
 
 void CDLL_destroyList(LinkedList* list) {
-    Node *del = list->head;
+    Node *delNode = list->head;
     
     if(list->head != NULL) {
         list->head->prev->next = NULL;
         
-        while(del != NULL) {
-            del->prev = NULL;
-            list->head = del->next;
-            free(del);
-            del = list->head;
+        while(delNode != NULL) {
+            delNode->prev = NULL;
+            list->head = delNode->next;
+            free(delNode);
+            delNode = list->head;
         }
     }
     free(list);
@@ -242,8 +241,8 @@ int main() {
     CDLL_insertNodeAt(party,"Chris",1);
     CDLL_printList(party); 
 
-    printf("Insert Ali node at 2 \n");
-    CDLL_insertNodeAt(party,"Ali",2);
+    printf("Insert Ali node at 0 \n");
+    CDLL_insertNodeAt(party,"Ali",0);
     CDLL_printList(party); 
 
     printf("Search Ali\n");
@@ -251,6 +250,10 @@ int main() {
 
     printf("Remove node at 2\n");
     CDLL_removeNodeAt(party,2);
+    CDLL_printList(party);
+
+    printf("Remove node at 0\n");
+    CDLL_removeNodeAt(party,0);
     CDLL_printList(party);
 
     printf("Remove the last node\n");

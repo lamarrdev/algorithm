@@ -3,13 +3,13 @@
 #include <string.h>
 
 typedef struct Node {
-    char data[10];
+    char* data;
     struct Node* next;
 } Node;
 
 typedef struct {
     Node* head;
-    int count;
+    int size;
 } LinkedList;
 
 
@@ -24,83 +24,78 @@ void SLL_printList(LinkedList* list);
 void SLL_destroyList(LinkedList* list);
 
 
+
 LinkedList* SLL_List_Init() {
-    LinkedList* new;
-    new = (LinkedList*)malloc(sizeof(LinkedList));
-    new->head = NULL;
-    new->count = 0;
-    return new;
+    LinkedList* newList;
+    newList = (LinkedList*)malloc(sizeof(LinkedList));
+    newList->head = NULL;
+    newList->size = 0;
+
+    return newList;
 }
 
 Node* SLL_Node_Init(char* str) {
-    Node* node = (Node*)malloc(sizeof(Node));
+    Node* newNode = (Node*)malloc(sizeof(Node));
+    newNode->data = (char*)malloc(strlen(str)+1);
+    strcpy(newNode->data, str);
+    newNode->next = NULL;
 
-    strcpy(node->data, str);
-    node->next = NULL;
-
-    return node;
+    return newNode;
 }
 
 void SLL_insertLastNode(LinkedList* list, char* str) {
     Node* newNode = SLL_Node_Init(str);
-    Node* selectNode;
+    Node* selectNode = list->head;;
 
     if (list->head == NULL) {
         list->head = newNode;
     }
     else {
-        selectNode = list->head;
         while (selectNode->next != NULL) {
             selectNode = selectNode->next;
         }
         selectNode->next = newNode;
     }
-
-    list->count++;
+    list->size++;
 }
 
-void SLL_insertNodeAt(LinkedList* list, char* str, int index) {
+void SLL_insertNodeAt(LinkedList* list, char* str, int n) {
     Node* newNode;
-    Node* selectNode = list->head;
-    int nodeN;
+    Node* selectNode = list->head;;
+    int i;
 
-    if(list->count == 0 || index < 0 || list->count-1 < index) {
+    if(list->size == 0 || n < 0 || list->size-1 < n) {
         SLL_insertLastNode(list, str);
         return;
     }
     
     newNode = SLL_Node_Init(str);
 
-    if(index == 0) {
+    if(n == 0) {
         newNode->next = list->head;
         list->head = newNode;
-        list->count++;
     }
     else {
-        nodeN = 0;
-        while (selectNode->next != NULL) {
-            if(nodeN == index-1) {
-                newNode->next = selectNode->next;
-                selectNode->next = newNode;
-                list->count++;
-                break;
-            }
-            nodeN++;
+        for(int i=0; i<n-1; i++){
             selectNode = selectNode->next;
         }
+        newNode->next = selectNode->next; 
+        selectNode->next = newNode;
     }
+    list->size++;
 }
 
 void SLL_removeLastNode(LinkedList* list) {
     Node* prvNode;
-    Node* selectNode;
+    Node* selectNode = list->head;;
 
     if (list->head == NULL) return;
 
     if (list->head->next == NULL) {
         free(list->head);
-    } else {
-        selectNode = list->head;
+        list->head = NULL;
+    }
+    else {
         while(selectNode->next != NULL) { 
             prvNode = selectNode;
             selectNode = selectNode->next;
@@ -108,59 +103,52 @@ void SLL_removeLastNode(LinkedList* list) {
         free(selectNode);
         prvNode->next = NULL;
     }
-
-    list->count--;
+    list->size--;
 }
 
-void SLL_removeNodeAt(LinkedList* list, int index) {
+void SLL_removeNodeAt(LinkedList* list, int n) {
     Node* selectNode = list->head;
     Node *deleteNode;
-    int nodeN;
+    int i;
 
-    if (list->head == NULL || index < 0 || list->count-1 < index) {
+    if (list->head == NULL || n < 0 || list->size-1 < n) {
         return;
     }
 
-    if (index == 0) {
+    if (n == 0) {
         list->head = list->head->next;
         free(selectNode);
-        list->count--;
-    } else {
-        nodeN = 0;
-        while (selectNode->next != NULL) {
-            if(nodeN == index-1) {
-                deleteNode = selectNode->next;
-                selectNode->next = selectNode->next->next;
-                free(deleteNode);
-                list->count--;
-                break;
-            }
-            nodeN++;
+    }
+    else {
+        for(int i=0; i<n-1; i++){
             selectNode = selectNode->next;
         }
+        deleteNode = selectNode->next;
+        selectNode->next = selectNode->next->next;
+        free(deleteNode);
     }
+    list->size--;
 }
-
-
 
 void SLL_searchNodes(LinkedList* list, char* str) {
     int access[100] = {-1};
-    int accessCount = 0, nodeIndex = 0;
+    int accessCount = 0;
     Node* selectNode = list->head;
+    int i;
     
-    while(selectNode != NULL) {
+    for(i=0; i<list->size; i++) {
         if(!strcmp(selectNode->data, str)) {
-            access[accessCount] = nodeIndex;
+            access[accessCount] = i;
             access[accessCount+1] = -1;
             accessCount++;
         }
-        nodeIndex++;
         selectNode = selectNode->next;
     }
 
     if(access[0] == -1) {
         printf("%s Not Found!\n\n",str);
-    } else {
+    }
+    else {
         for(int i=0; i<100; i++) {
             if(access[i] == -1) {
                 break;
@@ -168,7 +156,7 @@ void SLL_searchNodes(LinkedList* list, char* str) {
                 printf("%d ",access[i]);
             }
         }
-        printf("\n\n");
+    printf("\n\n");
     }
 }
 
@@ -183,20 +171,18 @@ void SLL_printList(LinkedList* list) {
             printf(", ");
         }
     }
-    printf(" (Total = %d)\n",list->count);
-
+    printf(" (Total = %d)\n",list->size);
     printf("\n");
 } 
 
 void SLL_destroyList(LinkedList* list) {
-    Node *del = list->head;
+    Node *delNode = list->head;
 
-    while(del != NULL) {
+    while(delNode != NULL) {
         list->head = list->head->next;
-        free(del);
-        del = list->head;
+        free(delNode);
+        delNode = list->head;
     }
-
     free(list);
 }
 
@@ -214,12 +200,12 @@ int main() {
     SLL_insertLastNode(party,"Chris");
     SLL_printList(party);
 
-    printf("Insert node at 1\n");
-    SLL_insertNodeAt(party,"Chris",1);
+    printf("Insert Chris node at 0\n");
+    SLL_insertNodeAt(party,"Chris",0);
     SLL_printList(party); 
 
-    printf("Insert node at 3\n");
-    SLL_insertNodeAt(party,"Makiko",3);
+    printf("Insert Panda node at 1\n");
+    SLL_insertNodeAt(party,"Panda",1);
     SLL_printList(party); 
 
     printf("Search Chris\n");
