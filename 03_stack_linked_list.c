@@ -12,7 +12,7 @@ typedef struct Node {
 } Node;
 
 // LinkedListStack : 스택 형태의 리스트를 정의
-typedef struct tLinkedListStack {
+typedef struct LinkedListStack {
     Node* top; // 리스트의 테일 노드 주소를 가리킬 포인터
     int size; // 리스트의 노드 갯수를 저장할 변수
 } LinkedListStack;
@@ -20,6 +20,9 @@ typedef struct tLinkedListStack {
 LinkedListStack* LLS_Stack_Init();
 Node* LLS_Node_Init(char* str);
 void LLS_Push(LinkedListStack* list, char* str);
+void LLS_Pop(LinkedListStack* list);
+Node* LLS_Top(LinkedListStack* list);
+void LLS_Destroy(LinkedListStack* list);
 
 // LLS_Stack_Init : 스택 형태의 리스트를 초기화
 LinkedListStack* LLS_Stack_Init() {
