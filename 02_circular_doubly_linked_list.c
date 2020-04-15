@@ -124,6 +124,7 @@ void CDLL_removeLastNode(LinkedList* list) {
         list->head->prev = list->head->prev->prev;
         list->head->prev->next = list->head;
     }
+    free(selectNode->data);
     free(selectNode);
     list->size--;
 }
@@ -146,6 +147,7 @@ void CDLL_removeNodeAt(LinkedList* list, int n) {
         selectNode->prev->next = selectNode->next;
         selectNode->next->prev = selectNode->prev;
     }
+    free(selectNode->data);
     free(selectNode);
     list->size--;
 }
@@ -203,9 +205,7 @@ void CDLL_printList(LinkedList* list) {
             printf(", ");
         }
     }
-    printf(" (Total = %d)\n",list->size);
-
-    printf("\n");
+    printf(" (Total = %d)\n\n",list->size);
 } 
 
 void CDLL_destroyList(LinkedList* list) {
@@ -217,6 +217,7 @@ void CDLL_destroyList(LinkedList* list) {
         while(delNode != NULL) {
             delNode->prev = NULL;
             list->head = delNode->next;
+            free(delNode->data);
             free(delNode);
             delNode = list->head;
         }

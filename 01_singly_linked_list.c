@@ -92,6 +92,7 @@ void SLL_removeLastNode(LinkedList* list) {
     if (list->head == NULL) return;
 
     if (list->head->next == NULL) {
+        free(list->head->data);
         free(list->head);
         list->head = NULL;
     }
@@ -100,6 +101,7 @@ void SLL_removeLastNode(LinkedList* list) {
             prvNode = selectNode;
             selectNode = selectNode->next;
         }
+        free(selectNode->data);
         free(selectNode);
         prvNode->next = NULL;
     }
@@ -117,6 +119,7 @@ void SLL_removeNodeAt(LinkedList* list, int n) {
 
     if (n == 0) {
         list->head = list->head->next;
+        free(selectNode->data);
         free(selectNode);
     }
     else {
@@ -125,6 +128,7 @@ void SLL_removeNodeAt(LinkedList* list, int n) {
         }
         deleteNode = selectNode->next;
         selectNode->next = selectNode->next->next;
+        free(deleteNode->data);
         free(deleteNode);
     }
     list->size--;
@@ -180,6 +184,7 @@ void SLL_destroyList(LinkedList* list) {
 
     while(delNode != NULL) {
         list->head = list->head->next;
+        free(delNode->data);
         free(delNode);
         delNode = list->head;
     }
