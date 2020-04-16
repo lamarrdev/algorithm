@@ -2,7 +2,7 @@ let stack = [];
 let convert = [];
 let temp = "";
 
-let f = "(5*2)+ (200 + 25)/2)";
+let f = "(5*2)+ (200 + 25)/2";
 f = f.replace(/(\s*)/g,"");
 
 for(let i=0; i<f.length; i++) {
