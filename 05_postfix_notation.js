@@ -42,6 +42,30 @@ for(let i=0; i<f.length; i++) {
 
 while(stack.length) {
     convert.push(stack.pop());
+};
+
+for(let i in convert) {
+    if(!isNaN(convert[i])) {
+        stack.push(convert[i]);
+    }
+    else {
+        const b = parseFloat(stack.pop());
+        const a = parseFloat(stack.pop());
+        switch(convert[i]) {
+            case '+':
+                stack.push(a+b);
+                break;
+            case '-':
+                stack.push(a-b);
+                break;
+            case '*':
+                stack.push(a*b);
+                break;
+            case '/':
+                stack.push(a/b);
+                break;
+        }
+    }
 }
 
 let result = "";
@@ -50,4 +74,5 @@ for(let i in convert) {
     result+=" "; 
 }
 console.log(f);
-console.log(result);
+console.log(result)
+console.log("Result = " + stack);
