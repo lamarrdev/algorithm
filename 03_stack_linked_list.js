@@ -21,8 +21,10 @@ LinkedListStack.prototype.push = function(str) {
 }
 
 LinkedListStack.prototype.pop = function() {
+    temp = this.top;
     this.top = this.top.prev;
     this.top.next = null;
+    return temp;
 }
 
 const stack = new LinkedListStack();
