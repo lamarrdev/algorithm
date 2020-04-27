@@ -2,7 +2,7 @@ let stack = [];
 let convert = [];
 let temp = "";
 
-let f = "360000 * 5 / 356 * 37";
+let f = "(5*2)+(200+25)/2";
 f = f.replace(/(\s*)/g,"");
 
 function prec(op) {
